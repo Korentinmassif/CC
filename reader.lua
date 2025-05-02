@@ -3,7 +3,7 @@ local speaker = peripheral.find("speaker")
 local decoder = dfpwm.make_decoder()
 
 -- === CONFIGURATION ===
-local folder = "." -- Remplace par "chunks_a" ou "chunks_b" si tes fichiers sont dans un sous-dossier
+local folder = "music" -- Dossier où se trouvent tous les fichiers .dfpwm
 
 -- === LISTE ET TRI DES FICHIERS ===
 local files = fs.list(folder)
@@ -15,12 +15,15 @@ for _, file in ipairs(files) do
   end
 end
 
-table.sort(playlist) -- Trie alphabétiquement (important pour l'ordre !)
+-- Trie avec sensibilité au nombre ET aux lettres (ex: part1a < part2a < part10a < part1b)
+table.sort(playlist, function(a, b)
+  return a:lower() < b:lower()
+end)
 
 -- === LECTURE DE CHAQUE FICHIER ===
 for _, filename in ipairs(playlist) do
-  local fullPath = fs.combine(folder, filename)
-  local file = fs.open(fullPath, "rb")
+  local path = fs.combine(folder, filename)
+  local file = fs.open(path, "rb")
   if file then
     print("🎵 Lecture :", filename)
     while true do
@@ -33,8 +36,8 @@ for _, filename in ipairs(playlist) do
     end
     file.close()
   else
-    print("⚠️ Impossible d'ouvrir :", filename)
+    print("❌ Erreur : impossible de lire", filename)
   end
 end
 
-print("✅ Lecture terminée.")
+print("✅ Lecture complète terminée.")
