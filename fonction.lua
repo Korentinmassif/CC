@@ -22,7 +22,7 @@ display.writeLine = function(line, attribute)
 		display.monitor.setCursorPos(1, y+1)
 	elseif attribute == "centered" then
 		if display.monitor == nil then error("Set display before writing") end
-		x, y = display.monitor.getCursorPos()
+		x, y = display.scale()
 		textLen = #line
 		noSpace = (x-textLen)%2
 		display.monitor.write(string.rep(" ", noSpace) .. line)
