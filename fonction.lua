@@ -31,6 +31,18 @@ display.writeLine = function(line, attribute, width)
 		display.monitor.setCursorPos(1, y+1)
 	end
 end
+
+display.setCursorPos = function(x, y)
+	display.monitor.setCursorPos(x, y)
+end
+
+display.clear = function ()
+	display.monitor.clear()
+end
+
+display.getCursorPos = function()
+	return display.monitor.getCursorPos()
+end
 -- descriptions des fonctions liées a MineColonies
 colony = nil
 colony = {}
