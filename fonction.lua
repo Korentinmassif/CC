@@ -9,7 +9,7 @@ display.setMonitor = function(monitor)
 	display.monitor.setCursorPos(1, 1)
 end
 display.scale = function(scale)
-	if scale == nil then return display.monitor.getTextScale()
+	if scale == nil then return display.monitor.getSize()
 	else display.monitor.setTextScale(scale)
 	end
 end
@@ -25,8 +25,7 @@ display.writeLine = function(line, attribute)
 		_, y = display.monitor.getCursorPos()
 		x, _ = display.scale()
 		textLen = #line
-		noSpace = (x-textLen)%2
-		display.monitor.write(noSpace)
+		noSpace = (x-textLen)/2
 		display.monitor.write(string.rep(" ", noSpace) .. line)
 		display.monitor.setCursorPos(1, y+1)
 	end
