@@ -26,6 +26,7 @@ display.writeLine = function(line, attribute)
 		x, _ = display.scale()
 		textLen = #line
 		noSpace = (x-textLen)%2
+		display.monitor.write(noSpace)
 		display.monitor.write(string.rep(" ", noSpace) .. line)
 		display.monitor.setCursorPos(1, y+1)
 	end
@@ -35,8 +36,8 @@ colony = nil
 colony = {}
 colony.minecolony = nil
 
-colony.setColony = function(colony)
-	colony.minecolony = colony
+colony.setColony = function(minecolony)
+	colony.minecolony = minecolony
 end
 
 colony.getName = function()
