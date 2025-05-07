@@ -58,7 +58,7 @@ end
 
 colony.getBuilderJob = function()
 	req = {}
-	for index, request in pairs(colony.minecolony.getRequests) do
+	for index, request in pairs(colony.minecolony.getRequests()) do
 		job, builder = string.match(request.target, "([^%s]+)%s+(.*)")
 		if job == "Builder" then
 			if req[builder] == nil then req[builder] = {} end
