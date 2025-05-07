@@ -1,4 +1,4 @@
--- description des fonction lié a l'affichage
+-- description des fonctions liées a l'affichage
 display = nil
 display = {}
 display.monitor = nil
@@ -29,7 +29,7 @@ display.writeLine = function(line, attribute)
 		display.monitor.setCursorPos(1, y+1)
 	end
 end
-
+-- descriptions des fonctions liées a MineColonies
 colony = nil
 colony = {}
 colony.colony = nil
