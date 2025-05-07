@@ -13,7 +13,7 @@ for _, request in ipairs(requests) do
 end
 
 for builder, request in pairs(buildRequest) do
-	print("requette pour" .. builder :)
+	print("requette pour" .. builder .." : ")
 	for requestIndex, item in ipairs(request) do
 		for itemName, count in pairs(item) do
 			print("\t"..requestIndex..".\t"..itemName.." : "..count)
