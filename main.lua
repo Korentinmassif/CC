@@ -14,7 +14,7 @@ while true do
   req = colony.getBuilderJob()
   for builder, items in pairs(req) do
     x, y = display.getCursorPos()
-    if y != 2 then secondBuilder = true end
+    if y ~= 2 then secondBuilder = true end
     if secondBuilder then 
       display.writeLine("Demande de ".. builder, "justified", monitorMid)
     else 
