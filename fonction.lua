@@ -14,7 +14,7 @@ display.scale = function(scale)
 	end
 end
 
-display.writeLine = function(line, attibute)
+display.writeLine = function(line, attribute)
 	if attribute == nil then
 		if display.monitor == nil then error("Set display before writing") end
 		_, y = display.monitor.getCursorPos()
