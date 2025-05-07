@@ -41,5 +41,5 @@ colony.setColony = function(minecolony)
 end
 
 colony.getName = function()
-	return colony.minecolony.getName()
+	return colony.minecolony.getColonyName()
 end
