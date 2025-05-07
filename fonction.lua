@@ -3,6 +3,7 @@ display.monitor = nil
 
 display.setMonitor = function(monitor)
 	display.monitor = monitor
+	display.monitor.clear()
 end
 display.writeLine = function(line)
 	if display.monitor == nil then error("Set display before writing") end
