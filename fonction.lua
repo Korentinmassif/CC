@@ -15,12 +15,12 @@ display.scale = function(scale)
 end
 
 display.writeLine = function(line, attibute)
-	if attribute = nil then
+	if attribute == nil then
 		if display.monitor == nil then error("Set display before writing") end
 		_, y = display.monitor.getCursorPos()
 		display.monitor.write(line)
 		display.monitor.setCursorPos(1, y+1)
-	elseif attribute = "centered" then
+	elseif attribute == "centered" then
 		if display.monitor == nil then error("Set display before writing") end
 		x, y = display.monitor.getCursorPos()
 		textLen = #line
