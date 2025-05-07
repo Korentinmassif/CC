@@ -1,3 +1,5 @@
+-- description des fonction lié a l'affichage
+display = nil
 display = {}
 display.monitor = nil
 
@@ -11,3 +13,5 @@ display.writeLine = function(line)
 	display.monitor.write(line)
 	display.monitor.setCursorPos(1, y+1)
 end
+
+
