@@ -22,7 +22,8 @@ display.writeLine = function(line, attribute)
 		display.monitor.setCursorPos(1, y+1)
 	elseif attribute == "centered" then
 		if display.monitor == nil then error("Set display before writing") end
-		x, y = display.scale()
+		_, y = display.monitor.getCursorPos()
+		x, _ = display.scale()
 		textLen = #line
 		noSpace = (x-textLen)%2
 		display.monitor.write(string.rep(" ", noSpace) .. line)
@@ -32,12 +33,12 @@ end
 -- descriptions des fonctions liées a MineColonies
 colony = nil
 colony = {}
-colony.colony = nil
+colony.minecolony = nil
 
 colony.setColony = function(colony)
-	colony.colony = colony
+	colony.minecolony = colony
 end
 
 colony.getName = function()
-	return colony.colony.getName()
+	return colony.minecolony.getName()
 end
