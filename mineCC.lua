@@ -1,4 +1,4 @@
-local colony = peripherals.find("colony")
+local colony = peripherals.wrap("back")
 local buildRequest = {}
 
 requests = colony.getRequests()
