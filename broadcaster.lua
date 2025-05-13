@@ -20,7 +20,7 @@ local stopSignal = false
 
 -- Function to play a specific song by name
 local function playSong(songName)
-  local baseUrl = "https://raw.githubusercontent.com/YourUser/YourRepo/main/"
+  local baseUrl = "https://raw.githubusercontent.com/Korentinmassif/CC/refs/heads/main/"
   local url = baseUrl .. songName .. ".dfpwm"
 
   local response = http.get(url)
