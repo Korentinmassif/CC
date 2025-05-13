@@ -1,6 +1,6 @@
--- broadcaster.lua
+-- broadcaster.lua v0.1
 local protocol = "music"
-local modemSide = "back"
+local modemSide = "top"
 rednet.open(modemSide)
 
 local dfpwm = require("cc.audio.dfpwm")
