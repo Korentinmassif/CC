@@ -1,22 +1,25 @@
 -- receiver.lua
 local speaker = peripheral.find("speaker")
-local dfpwm = require("cc.audio.dfpwm") -- module officiel de CC:Tweaked
+local dfpwm = require("cc.audio.dfpwm")
 local decoder = dfpwm.make_decoder()
 
-rednet.open("back") -- adapte selon ton setup
+rednet.open("back") -- adapte si nécessaire
 
 local buffer = {}
 local isPlaying = false
 
--- Lecture synchronisée
-local function play_buffer()
-  while isPlaying and #buffer > 0 do
-    local frame = table.remove(buffer, 1)
-    speaker.playAudio(frame)
-    sleep(0.05) -- 20 FPS
+-- Lecture fluide du buffer
+local function audio_loop()
+  while isPlaying do
+    if #buffer > 0 then
+      local frame = table.remove(buffer, 1)
+      speaker.playAudio(frame)
+    end
+    sleep(0.05) -- lecture régulière (20 FPS = 1 chunk toutes les 50ms)
   end
 end
 
+-- Exécution principale
 while true do
   local _, msg = rednet.receive()
 
@@ -32,7 +35,7 @@ while true do
     local delay = msg.tick - os.epoch("utc")
     if delay > 0 then sleep(delay / 1000) end
     isPlaying = true
-    play_buffer()
+    audio_loop()
 
   elseif msg.cmd == "stop" then
     isPlaying = false
