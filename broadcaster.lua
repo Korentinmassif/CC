@@ -1,5 +1,4 @@
--- broadcaster.lua v0.11
--- broadcaster.lua
+-- broadcaster.lua v0.12
 local protocol = "music"
 local modemSide = "back"
 rednet.open(modemSide)
@@ -71,23 +70,25 @@ local function playBufferedSong()
       break
     end
 
-    -- If buffer is empty, return and wait for more data
     if bufferIndex > #buffer then
       print("Buffer empty, waiting for more data...")
-      break
+      os.sleep(0.05)
+    else
+      -- Get the next chunk to play
+      local chunk = buffer[bufferIndex]
+      bufferIndex = bufferIndex + 1
+
+      local audio = decoder(chunk)
+
+      -- Play the audio on all speakers
+      for _, speaker in ipairs(speakers) do
+        speaker.playAudio(audio)
+      end
+
+      -- Sleep based on audio length (48,000 samples per second)
+      local seconds = #audio / 48000
+      os.sleep(seconds)
     end
-
-    -- Get the next chunk to play
-    local chunk = buffer[bufferIndex]
-    bufferIndex = bufferIndex + 1
-
-    local audio = decoder(chunk)
-    for _, speaker in ipairs(speakers) do
-      speaker.playAudio(audio)
-    end
-
-    -- Delay to control playback speed, adjust if sound jumps
-    os.sleep(0.05)
   end
 end
 
