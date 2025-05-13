@@ -1,13 +1,14 @@
+local protocol = "music"
 rednet.open("back")
 
-print("Enter song name (e.g. song1) or 'stop' to stop:")
+print("Enter a song name (e.g. 'intro') or type 'stop':")
 
 while true do
   io.write("> ")
-  local msg = read()
-
-  if msg ~= "" then
-    rednet.broadcast(msg, "music") -- You can target a specific ID if you want
-    print("Sent: " .. msg)
+  local input = read()
+  if input and input ~= "" then
+    rednet.broadcast(input, protocol)
+    print("Sent: " .. input)
   end
 end
+
