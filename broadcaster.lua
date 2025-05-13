@@ -1,6 +1,7 @@
--- broadcaster.lua v0.10
+-- broadcaster.lua v0.11
+-- broadcaster.lua
 local protocol = "music"
-local modemSide = "top"
+local modemSide = "back"
 rednet.open(modemSide)
 
 local dfpwm = require("cc.audio.dfpwm")
@@ -113,7 +114,7 @@ while true do
 
   if msg == "stop" then
     if playing then
-      stopSignal = true
+      stopSignal = true  -- Stop playback
     else
       print("Nothing is playing.")
     end
