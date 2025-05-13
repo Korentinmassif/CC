@@ -1,4 +1,4 @@
--- broadcaster.lua v0.1
+-- broadcaster.lua v0.10
 local protocol = "music"
 local modemSide = "top"
 rednet.open(modemSide)
