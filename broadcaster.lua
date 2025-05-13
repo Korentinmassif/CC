@@ -1,38 +1,45 @@
 -- broadcaster.lua
-local modemSide = "top"
-local speaker = peripheral.find("speaker")
 local protocol = "music"
-
-if not speaker then
-  error("No speaker connected!")
-end
-
-local dfpwm = require("cc.audio.dfpwm")
-local decoder = dfpwm.make_decoder()
-
+local modemSide = "top"
 rednet.open(modemSide)
 
+local dfpwm = require("cc.audio.dfpwm")
+
+-- Detect all attached speakers
+local speakers = {}
+for _, name in ipairs(peripheral.getNames()) do
+  if peripheral.getType(name) == "speaker" then
+    table.insert(speakers, peripheral.wrap(name))
+  end
+end
+
+if #speakers == 0 then
+  error("No speakers found.")
+end
+
+print("Speakers found: " .. #speakers)
 print("Listening for music commands...")
 
--- Global flags
+-- Playback state
 local playing = false
 local stopSignal = false
 
--- Function to play a specific song by name
+-- Function to stream and play DFPWM
 local function playSong(songName)
-  local baseUrl = "https://raw.githubusercontent.com/Korentinmassif/CC/refs/heads/main/"
+  local baseUrl = "https://github.com/Korentinmassif/CC/raw/refs/heads/main/"
   local url = baseUrl .. songName .. ".dfpwm"
+
+  print("Fetching: " .. url)
 
   local response = http.get(url)
   if not response then
-    print("Could not fetch: " .. url)
+    print("Failed to fetch '" .. songName .. "' from GitHub.")
     return
   end
 
+  local decoder = dfpwm.make_decoder()
   playing = true
   stopSignal = false
-  decoder = dfpwm.make_decoder()
-  print("Playing: " .. songName)
 
   while true do
     if stopSignal then
@@ -47,7 +54,9 @@ local function playSong(songName)
     end
 
     local audio = decoder(chunk)
-    speaker.playAudio(audio)
+    for _, speaker in ipairs(speakers) do
+      speaker.playAudio(audio)
+    end
     os.sleep(0.05)
   end
 
@@ -55,7 +64,7 @@ local function playSong(songName)
   playing = false
 end
 
--- Main loop
+-- Main command loop
 while true do
   local _, msg, proto = rednet.receive(protocol)
 
@@ -67,9 +76,8 @@ while true do
     end
   else
     if playing then
-      print("Already playing something. Stop it first.")
+      print("Already playing something. Please stop it first.")
     else
-      -- Start song in a parallel task
       parallel.waitForAny(
         function() playSong(msg) end,
         function()
