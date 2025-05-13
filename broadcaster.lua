@@ -23,7 +23,7 @@ print("Listening for music commands...")
 local playing = false
 local stopSignal = false
 local buffer = {}
-local bufferSize = 1024 * 4  -- Increase buffer size (8KB)
+local bufferSize = 1024 * 32  -- Increase buffer size (8KB)
 local bufferIndex = 1
 local fetching = false
 
