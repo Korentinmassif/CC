@@ -5,7 +5,7 @@ rednet.open(modemSide)
 
 local dfpwm = require("cc.audio.dfpwm")
 
--- Detect all attached speakers
+-- Find all speakers
 local speakers = {}
 for _, name in ipairs(peripheral.getNames()) do
   if peripheral.getType(name) == "speaker" then
@@ -17,29 +17,49 @@ if #speakers == 0 then
   error("No speakers found.")
 end
 
-print("Speakers found: " .. #speakers)
+print("Speakers found:", #speakers)
 print("Listening for music commands...")
 
--- Playback state
 local playing = false
 local stopSignal = false
+local buffer = {}
+local bufferSize = 1024 * 2  -- Buffer size (2KB)
+local bufferIndex = 1
+local fetching = false
 
--- Function to stream and play DFPWM
-local function playSong(songName)
+-- Function to preload song data into buffer
+local function bufferSong(songName)
   local baseUrl = "https://github.com/Korentinmassif/CC/raw/refs/heads/main/"
   local url = baseUrl .. songName .. ".dfpwm"
-
-  print("Fetching: " .. url)
+  print("Starting stream:", url)
 
   local response = http.get(url)
   if not response then
-    print("Failed to fetch '" .. songName .. "' from GitHub.")
-    return
+    print("Failed to fetch:", songName)
+    return false
   end
 
+  while true do
+    if #buffer >= bufferSize then
+      break  -- Stop buffering when we have enough data
+    end
+
+    local chunk = response.read(256)  -- Increase chunk size for faster download
+    if not chunk then
+      break  -- End of stream
+    end
+
+    table.insert(buffer, chunk)
+  end
+
+  response.close()
+  print("Buffer filled with", #buffer, "chunks.")
+  return true
+end
+
+-- Function to play buffered song
+local function playBufferedSong()
   local decoder = dfpwm.make_decoder()
-  playing = true
-  stopSignal = false
 
   while true do
     if stopSignal then
@@ -47,24 +67,44 @@ local function playSong(songName)
       break
     end
 
-    local chunk = response.read(16)
-    if not chunk then
-      print("Playback finished.")
+    -- If buffer is empty, return and wait for more data
+    if bufferIndex > #buffer then
+      print("Buffer empty, waiting for more data...")
       break
     end
+
+    -- Get the next chunk to play
+    local chunk = buffer[bufferIndex]
+    bufferIndex = bufferIndex + 1
 
     local audio = decoder(chunk)
     for _, speaker in ipairs(speakers) do
       speaker.playAudio(audio)
     end
+
+    -- Delay to control playback speed
     os.sleep(0.05)
   end
-
-  response.close()
-  playing = false
 end
 
--- Main command loop
+-- Function to fetch more data in the background
+local function fetchData(songName)
+  while true do
+    if #buffer < bufferSize and not fetching then
+      fetching = true
+      print("Fetching more data...")
+      local success = bufferSong(songName)
+      fetching = false
+      if not success then
+        print("Error fetching data!")
+        break
+      end
+    end
+    os.sleep(0.1)  -- Sleep to prevent constant checking
+  end
+end
+
+-- Main loop
 while true do
   local _, msg, proto = rednet.receive(protocol)
 
@@ -76,14 +116,19 @@ while true do
     end
   else
     if playing then
-      print("Already playing something. Please stop it first.")
+      print("Already playing. Please stop current song first.")
     else
+      -- Start streaming and buffering in parallel
+      playing = true
+      bufferIndex = 1
+      stopSignal = false
+
+      -- Start fetching data in the background
       parallel.waitForAny(
-        function() playSong(msg) end,
-        function()
-          while playing do os.sleep(0.1) end
-        end
+        function() fetchData(msg) end,
+        function() playBufferedSong() end
       )
+      playing = false
     end
   end
 end
