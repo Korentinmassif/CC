@@ -1,5 +1,5 @@
 -- broadcaster.lua
-local modemSide = "back"
+local modemSide = "top"
 local speaker = peripheral.find("speaker")
 local protocol = "music"
 
