@@ -1,9 +1,9 @@
 -- receiver.lua
 local speaker = peripheral.find("speaker")
-local audio = require("cc.audio")
-local decoder = audio.make_decoder()
+local dfpwm = require("cc.audio.dfpwm") -- module officiel de CC:Tweaked
+local decoder = dfpwm.make_decoder()
 
-rednet.open("back") -- Adapte selon le côté du modem
+rednet.open("back") -- adapte selon ton setup
 
 local buffer = {}
 local isPlaying = false
