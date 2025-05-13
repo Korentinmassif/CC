@@ -1,6 +1,6 @@
 -- broadcaster.lua
 local protocol = "music"
-local modemSide = "top"
+local modemSide = "back"
 rednet.open(modemSide)
 
 local dfpwm = require("cc.audio.dfpwm")
@@ -41,15 +41,18 @@ local function bufferSong(songName)
 
   while true do
     if #buffer >= bufferSize then
+      print("Buffer full, stopping fetch.")
       break  -- Stop buffering when we have enough data
     end
 
     local chunk = response.read(256)  -- Increase chunk size for faster download
     if not chunk then
+      print("No more data available.")
       break  -- End of stream
     end
 
     table.insert(buffer, chunk)
+    print("Buffered", #buffer, "chunks.")
   end
 
   response.close()
@@ -123,11 +126,17 @@ while true do
       bufferIndex = 1
       stopSignal = false
 
-      -- Start fetching data in the background
-      parallel.waitForAny(
-        function() fetchData(msg) end,
-        function() playBufferedSong() end
-      )
+      -- Ensure that the buffer has enough data before starting
+      local success = bufferSong(msg)
+      if success then
+        parallel.waitForAny(
+          function() fetchData(msg) end,  -- Fetch data in parallel
+          function() playBufferedSong() end  -- Start playback
+        )
+      else
+        print("Failed to buffer song:", msg)
+      end
+
       playing = false
     end
   end
