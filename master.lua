@@ -15,7 +15,7 @@ while true do
 
       -- Buffer initial (20 chunks ~ 1 seconde)
       for i = 1, 20 do
-        local chunk = handle.read(1024)
+        local chunk = handle.read(4092)
         if not chunk then break end
         table.insert(bufferChunks, chunk)
         for _, id in ipairs(receivers) do
