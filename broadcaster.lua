@@ -23,7 +23,7 @@ print("Listening for music commands...")
 local playing = false
 local stopSignal = false
 local buffer = {}
-local bufferSize = 1024 * 4  -- Buffer size (4KB)
+local bufferSize = 1024 * 8  -- Increase buffer size (8KB)
 local bufferIndex = 1
 local fetching = false
 
@@ -45,7 +45,7 @@ local function bufferSong(songName)
       break  -- Stop buffering when we have enough data
     end
 
-    local chunk = response.read(256)  -- Increase chunk size for faster download
+    local chunk = response.read(512)  -- Increase chunk size for faster download
     if not chunk then
       print("No more data available.")
       break  -- End of stream
@@ -85,7 +85,7 @@ local function playBufferedSong()
       speaker.playAudio(audio)
     end
 
-    -- Delay to control playback speed
+    -- Delay to control playback speed, adjust if sound jumps
     os.sleep(0.05)
   end
 end
@@ -103,7 +103,7 @@ local function fetchData(songName)
         break
       end
     end
-    os.sleep(0.1)  -- Sleep to prevent constant checking
+    os.sleep(0.05)  -- Shortened sleep to allow more frequent fetching
   end
 end
 
@@ -141,3 +141,4 @@ while true do
     end
   end
 end
+
