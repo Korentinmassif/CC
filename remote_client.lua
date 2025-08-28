@@ -6,50 +6,43 @@ rednet.open(modemSide)
 local buffer = {}
 local chunkInterval = 0.05
 
-print("Client prêt. En attente des données...")
+print("Client prêt. En attente de données synchronisées...")
 
 local function playLoop()
     for i = 1, #buffer do
-        local chunk = buffer[i]
-        if type(chunk) == "string" then
-            speaker.playAudio(chunk)
-            sleep(chunkInterval)
-        else
-            print("⚠ Chunk invalide au rang " .. tostring(i))
-        end
+        speaker.playAudio(buffer[i])
+        sleep(chunkInterval)
     end
     print("Lecture terminée.")
 end
 
 while true do
-    local id, msg, proto = rednet.receive("music")
+    local _, msg, _ = rednet.receive("music")
 
-    if type(msg) == "table" and msg.cmd == "chunk" then
-        -- On vérifie bien que .data est une string
-        if type(msg.data) == "string" then
+    if type(msg) == "table" then
+        if msg.cmd == "chunk" and type(msg.data) == "string" then
             buffer[msg.seq] = msg.data
-        else
-            print("⚠ Chunk reçu invalide (pas une string)")
-        end
 
-    elseif msg == "start" then
-        print("Signal de départ reçu.")
-        -- Trie les chunks dans l'ordre
-        local orderedBuffer = {}
-        for i = 1, #buffer do
-            if buffer[i] then
-                table.insert(orderedBuffer, buffer[i])
+        elseif msg.cmd == "start" then
+            print("Signal de départ reçu.")
+            -- Trie les chunks
+            local ordered = {}
+            for i = 1, #buffer do
+                if buffer[i] then
+                    table.insert(ordered, buffer[i])
+                end
             end
+            buffer = ordered
+            playLoop()
+            break
+
+        elseif msg.cmd == "stop" then
+            print("Arrêt reçu.")
+            break
+        else
+            print("Message inconnu reçu : " .. tostring(msg.cmd))
         end
-        buffer = orderedBuffer
-        playLoop()
-        break
-
-    elseif msg == "stop" then
-        print("Arrêt forcé.")
-        break
-
     else
-        print("Message ignoré (type = " .. type(msg) .. ")")
+        print("⚠ Message ignoré (pas une table)")
     end
 end
