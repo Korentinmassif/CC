@@ -1,4 +1,4 @@
--- speaker_client_sync.lua
+-- speaker_client_sync.lua 
 local speaker = peripheral.find("speaker")
 local modemSide = "back"
 rednet.open(modemSide)
