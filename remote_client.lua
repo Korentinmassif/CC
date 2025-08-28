@@ -1,48 +1,54 @@
 -- speaker_client_sync.lua
 local speaker = peripheral.find("speaker")
-local modemSide = "back"
+local modemSide = "back" -- adapte selon ta config
 rednet.open(modemSide)
 
 local buffer = {}
-local chunkInterval = 0.05
+local chunkInterval = 0.05 -- délai entre chaque chunk
 
-print("Client prêt. En attente de données synchronisées...")
+print("Client prêt. En attente des données synchronisées...")
 
 local function playLoop()
     for i = 1, #buffer do
-        speaker.playAudio(buffer[i])
-        sleep(chunkInterval)
+        local chunk = buffer[i]
+        if type(chunk) == "string" then
+            speaker.playAudio(chunk)
+            sleep(chunkInterval)
+        else
+            print("⚠ Chunk invalide à l'index " .. tostring(i))
+        end
     end
     print("Lecture terminée.")
 end
 
 while true do
-    local _, msg, _ = rednet.receive("music")
+    local id, msg, proto = rednet.receive("music")
 
-    if type(msg) == "table" then
-        if msg.cmd == "chunk" and type(msg.data) == "string" then
+    if type(msg) == "table" and msg.cmd == "chunk" then
+        if type(msg.seq) == "number" and type(msg.data) == "string" then
             buffer[msg.seq] = msg.data
-
-        elseif msg.cmd == "start" then
-            print("Signal de départ reçu.")
-            -- Trie les chunks
-            local ordered = {}
-            for i = 1, #buffer do
-                if buffer[i] then
-                    table.insert(ordered, buffer[i])
-                end
-            end
-            buffer = ordered
-            playLoop()
-            break
-
-        elseif msg.cmd == "stop" then
-            print("Arrêt reçu.")
-            break
         else
-            print("Message inconnu reçu : " .. tostring(msg.cmd))
+            print("⚠ Chunk reçu invalide (seq ou data manquant/invalide)")
         end
+
+    elseif type(msg) == "table" and msg.cmd == "start" then
+        print("Signal de départ reçu.")
+        -- Trie les chunks dans l'ordre
+        local orderedBuffer = {}
+        for i = 1, #buffer do
+            if buffer[i] then
+                table.insert(orderedBuffer, buffer[i])
+            end
+        end
+        buffer = orderedBuffer
+        playLoop()
+        break
+
+    elseif type(msg) == "table" and msg.cmd == "stop" then
+        print("Arrêt forcé reçu.")
+        break
+
     else
-        print("⚠ Message ignoré (pas une table)")
+        print("Message ignoré ou non conforme reçu : " .. (msg.cmd or tostring(msg)))
     end
 end
