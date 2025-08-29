@@ -31,7 +31,7 @@ end
 
 function Monitor:setBackground(color)
     self.mon.setBackgroundColor(color)
-    self.mon.setTextColor(color) -- aussi au cas où il y a du texte
+    self.mon.setTextColor(color)
     local w, h = self.mon.getSize()
 
     for y = 1, h do
@@ -58,16 +58,15 @@ function Monitor:loadConfig(config)
 end
 
 function Monitor:draw()
-    self.mon.clear()
+    -- Appliquer un fond propre
+    self:setBackground(colors.black)  -- ou autre couleur de fond par défaut
 
-    -- Dessiner les carrés de background
-    if self.backgrounds then
-        for _, bg in ipairs(self.backgrounds) do
-            self.mon.setBackgroundColor(bg.color)
-            for i = 0, bg.height - 1 do
-                self.mon.setCursorPos(bg.x, bg.y + i)
-                self.mon.write((" "):rep(bg.width))
-            end
+    -- Dessiner les carrés de background personnalisés
+    for _, bg in ipairs(self.backgrounds) do
+        self.mon.setBackgroundColor(bg.color)
+        for i = 0, bg.height - 1 do
+            self.mon.setCursorPos(bg.x, bg.y + i)
+            self.mon.write((" "):rep(bg.width))
         end
     end
 
@@ -83,7 +82,7 @@ function Monitor:draw()
             self.mon.write((" "):rep(width))
         end
 
-        -- Fond
+        -- Intérieur
         self.mon.setBackgroundColor(button.bgColor)
         for i = 1, height - 2 do
             self.mon.setCursorPos(x + 1, y + i)
@@ -100,4 +99,6 @@ function Monitor:draw()
         end
     end
 end
+
+
 

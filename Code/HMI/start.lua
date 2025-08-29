@@ -12,10 +12,10 @@ while true do
         monitor:clear()
         state = machine.start
     elseif state == machine.start then
-        window = require"PIC/main_menu.lua"
+        window = require"PIC/main_menu"
         monitor:loadConfig(window)
         monitor:draw()
     end
-    os.wait(0.1)
+    os.sleep(0.1)
 end
 
