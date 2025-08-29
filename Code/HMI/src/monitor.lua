@@ -57,7 +57,7 @@ function Monitor:loadConfig(config)
     end
 end
 
-function monitor:flush()
+function Monitor:flush()
     self.buttons = {}
     self.background = {}
 end
