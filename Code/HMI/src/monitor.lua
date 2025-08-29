@@ -1,4 +1,4 @@
-require "./button.lua"
+require "src/button"
 
 Monitor = {}
 Monitor.__index = Monitor
@@ -7,11 +7,26 @@ function Monitor.new()
     local self = setmetatable({}, Monitor)
     self.mon = peripheral.find("monitor")
     self.buttons = {}
+    self.backgrounds = {} 
     return self
 end
 
 function Monitor:addButton(...)
     table.insert(self.buttons, ...)
+end
+
+function Monitor:getButtonAt(x, y)
+    for _, button in pairs(self.buttons) do
+        if x >= button.x and x < button.x + button.width and
+           y >= button.y and y < button.y + button.height then
+            return button
+        end
+    end
+    return nil
+end
+
+function Monitor:addBackground(...)
+    table.insert(self.backgrounds, ...)
 end
 
 function Monitor:setBackground(color)
@@ -31,8 +46,26 @@ function Monitor:clear()
     self.mon.clear()
 end
 
+function Monitor:loadConfig(config)
+    for _, bg in ipairs(config.background) do
+        self:addBackground(bg)
+    end
+
+    -- Ajout des boutons
+    for _, btn in ipairs(config.buttons) do
+        self:addButton(btn)
+    end
+end
+
 function Monitor:draw()
     self.mon.clear()
+    for _, bg in ipairs(self.backgrounds) do
+        self.mon.setBackgroundColor(bg.color)
+        for y = 0, bg.height - 1 do
+            self.mon.setCursorPos(bg.x, bg.y + y)
+            self.mon.write((" "):rep(bg.width))
+        end
+    end
     for _, button in pairs(self.buttons) do
         local x, y = button.x, button.y
         local width, height = button.width, button.height
