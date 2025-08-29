@@ -59,29 +59,38 @@ end
 
 function Monitor:draw()
     self.mon.clear()
-    for _, bg in ipairs(self.backgrounds) do
-        self.mon.setBackgroundColor(bg.color)
-        for y = 0, bg.height - 1 do
-            self.mon.setCursorPos(bg.x, bg.y + y)
-            self.mon.write((" "):rep(bg.width))
+
+    -- Dessiner les carrés de background
+    if self.backgrounds then
+        for _, bg in ipairs(self.backgrounds) do
+            self.mon.setBackgroundColor(bg.color)
+            for i = 0, bg.height - 1 do
+                self.mon.setCursorPos(bg.x, bg.y + i)
+                self.mon.write((" "):rep(bg.width))
+            end
         end
     end
+
+    -- Dessiner les boutons
     for _, button in pairs(self.buttons) do
         local x, y = button.x, button.y
         local width, height = button.width, button.height
 
+        -- Bordure
         self.mon.setBackgroundColor(button.bdColor)
         for i = 0, height - 1 do
             self.mon.setCursorPos(x, y + i)
             self.mon.write((" "):rep(width))
         end
 
+        -- Fond
         self.mon.setBackgroundColor(button.bgColor)
         for i = 1, height - 2 do
             self.mon.setCursorPos(x + 1, y + i)
             self.mon.write((" "):rep(width - 2))
         end
 
+        -- Texte
         if button.label then
             local labelX = x + math.floor((width - #button.label) / 2)
             local labelY = y + math.floor(height / 2)
@@ -91,3 +100,4 @@ function Monitor:draw()
         end
     end
 end
+

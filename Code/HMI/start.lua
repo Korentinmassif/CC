@@ -9,6 +9,7 @@ window = nil
 while true do
     if state == machine.init then 
         monitor = Monitor.new()
+        monitor:clear()
         state = machine.start
     elseif state == machine.start then
         window = require"PIC/main_menu.lua"
