@@ -25,6 +25,12 @@ function Monitor:setBackground(color)
     end
 end
 
+function Monitor:clear()
+    self.mon.setBackgroundColor(colors.black) -- ou une autre couleur par défaut
+    self.mon.setTextColor(colors.white)       -- optionnel
+    self.mon.clear()
+end
+
 function Monitor:draw()
     self.mon.clear()
     for _, button in pairs(self.buttons) do
