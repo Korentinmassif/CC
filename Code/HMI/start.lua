@@ -25,6 +25,7 @@ while true do
         end
     elseif state == machine.empty_cache then 
         monitor:flush()
+        monitor:clear()
         state = machine.load
     elseif state == machine.load then 
         window = require(future_config)

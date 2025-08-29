@@ -59,7 +59,7 @@ end
 
 function Monitor:flush()
     self.buttons = {}
-    self.background = {}
+    self.backgrounds = {}
 end
 
 function Monitor:draw()
