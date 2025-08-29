@@ -57,6 +57,11 @@ function Monitor:loadConfig(config)
     end
 end
 
+function monitor:flush()
+    self.buttons = {}
+    self.background = {}
+end
+
 function Monitor:draw()
     -- Appliquer un fond propre
     self:setBackground(colors.black)  -- ou autre couleur de fond par défaut
