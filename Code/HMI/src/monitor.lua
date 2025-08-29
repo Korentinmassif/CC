@@ -14,6 +14,17 @@ function Monitor:addButton(...)
     table.insert(self.buttons, ...)
 end
 
+function Monitor:setBackground(color)
+    self.mon.setBackgroundColor(color)
+    self.mon.setTextColor(color) -- aussi au cas où il y a du texte
+    local w, h = self.mon.getSize()
+
+    for y = 1, h do
+        self.mon.setCursorPos(1, y)
+        self.mon.write((" "):rep(w))
+    end
+end
+
 function Monitor:draw()
     self.mon.clear()
     for _, button in pairs(self.buttons) do
