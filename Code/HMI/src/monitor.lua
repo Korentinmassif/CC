@@ -33,7 +33,7 @@ function Monitor:addBackground(...)
 end
 
 function Monitor:addProgressBar(...)
-    table.insert(self.ProgressBar, ...)
+    table.insert(self.progressBar, ...)
 end
 
 function Monitor:setBackground(color)
