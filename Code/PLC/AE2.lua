@@ -15,7 +15,7 @@ while true do
             cpu_data.itemName = "None"
             cpu_data.completion = 0
         end
-        data.insert(cpu_data)
+        table.insert(data, cpu_data)
     end
 
     message = textutils.serialize(data)
