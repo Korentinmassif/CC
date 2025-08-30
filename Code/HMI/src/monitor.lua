@@ -1,4 +1,5 @@
 require "src/button"
+require "src/progress_bar"
 
 Monitor = {}
 Monitor.__index = Monitor
@@ -8,6 +9,8 @@ function Monitor.new()
     self.mon = peripheral.find("monitor")
     self.buttons = {}
     self.backgrounds = {} 
+    self.progressBar = {}
+    self.rednetChannel = nil
     return self
 end
 
@@ -27,6 +30,10 @@ end
 
 function Monitor:addBackground(...)
     table.insert(self.backgrounds, ...)
+end
+
+function Monitor:addProgressBar(...)
+    table.insert(self.ProgressBar, ...)
 end
 
 function Monitor:setBackground(color)
@@ -55,16 +62,23 @@ function Monitor:loadConfig(config)
     for _, btn in ipairs(config.buttons) do
         self:addButton(btn)
     end
+
+    for _, pb in ipairs(config.progressBar) do 
+        self:addProgressBar(pb)
+    end
+
+    self.rednetChannel = config.rednetChannel
 end
 
 function Monitor:flush()
     self.buttons = {}
     self.backgrounds = {}
+    self.rednetChannel = nil
 end
 
 function Monitor:draw()
     -- Appliquer un fond propre
-    self:setBackground(colors.black)  -- ou autre couleur de fond par défaut
+    self:setBackground(colors.white)  -- ou autre couleur de fond par défaut
 
     -- Dessiner les carrés de background personnalisés
     for _, bg in ipairs(self.backgrounds) do
@@ -101,6 +115,24 @@ function Monitor:draw()
             self.mon.setCursorPos(labelX, labelY)
             self.mon.setTextColor(button.txColor)
             self.mon.write(button.label)
+        end
+    end
+
+    -- Dessiner les ProgressBars
+    for _, pb in ipairs(self.progressBars or {}) do
+            -- Dessiner d'abord le fond (background)
+        -- Dessiner la partie remplie (fill) en premier
+        self.mon.setBackgroundColor(progressBar.fillColor)
+        for i = 1, progressBar.widthFill do
+            self.mon.setCursorPos(progressBar.x + i - 1, progressBar.y)
+            self.mon.write(" ")  -- Un espace pour remplir la zone de la barre
+        end
+
+        -- Ensuite, dessiner la partie fond (background)
+        self.mon.setBackgroundColor(progressBar.bgColor)
+        for i = 1, progressBar.widthBg do
+            self.mon.setCursorPos(progressBar.x + progressBar.widthFill + i - 1, progressBar.y)
+            self.mon.write(" ")  -- Un espace pour remplir la zone de fond
         end
     end
 end

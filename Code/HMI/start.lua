@@ -13,6 +13,7 @@ while true do
         monitor:clear()
         state = machine.load
     elseif state == machine.wait_click then
+        
         local event, side, x, y = os.pullEvent("monitor_touch")
         local button = monitor:getButtonAt(x, y)
         if button and button.onClick then
