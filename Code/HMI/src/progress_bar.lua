@@ -2,6 +2,7 @@ ProgressBar = {}
 ProgressBar.__index = Button
 
 function ProgressBar.new(fill, x, y, width, height, bgColor, fillColor)
+    local self = setmetatable({}, Button)
     self.x = x
     self.y = y
     self.width = width 
