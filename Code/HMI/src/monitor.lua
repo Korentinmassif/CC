@@ -54,16 +54,16 @@ function Monitor:clear()
 end
 
 function Monitor:loadConfig(config)
-    for _, bg in ipairs(config.background) do
+    for _, bg in ipairs(config.background or {}) do
         self:addBackground(bg)
     end
 
     -- Ajout des boutons
-    for _, btn in ipairs(config.buttons) do
+    for _, btn in ipairs(config.buttons or {}) do
         self:addButton(btn)
     end
 
-    for _, pb in ipairs(config.progressBar) do 
+    for _, pb in ipairs(config.progressBar or {}) do 
         self:addProgressBar(pb)
     end
 
