@@ -73,6 +73,7 @@ end
 function Monitor:flush()
     self.buttons = {}
     self.backgrounds = {}
+    self.progressBar = {}
     self.rednetChannel = nil
 end
 
@@ -119,7 +120,7 @@ function Monitor:draw()
     end
 
     -- Dessiner les ProgressBars
-    for _, pb in ipairs(self.progressBars or {}) do
+    for _, pb in ipairs(self.progressBar) do
             -- Dessiner d'abord le fond (background)
         -- Dessiner la partie remplie (fill) en premier
         self.mon.setBackgroundColor(pb.fillColor)
