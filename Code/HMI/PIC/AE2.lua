@@ -8,7 +8,7 @@ return {
         { x = 12, y = 1, width = 8, height = 3, color = colors.lightGray },
     },
 
-    rednetChannel = 81
+    rednetChannel = 81,
 
     buttons = {
         -- Chaque bouton est une instance Button
@@ -21,11 +21,11 @@ return {
         Button.new("Main", 5, 16, 12, 3, colors.red, colors.white, colors.white, function()
             return "PIC/main_menu"
         end),
-    }
+    },
 
     progressBar = {
         ProgressBar.new(10, 12, 8 , 64, 3, colors.red, colors.green), 
         ProgressBar.new(50, 12, 12 , 64, 3, colors.red, colors.green), 
-        ProgressBar.new(100, 12, 16 , 64, 3, colors.red, colors.green)
+        ProgressBar.new(100, 12, 16 , 64, 3, colors.red, colors.green),
     }
 }
