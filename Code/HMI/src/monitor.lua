@@ -122,16 +122,16 @@ function Monitor:draw()
     for _, pb in ipairs(self.progressBars or {}) do
             -- Dessiner d'abord le fond (background)
         -- Dessiner la partie remplie (fill) en premier
-        self.mon.setBackgroundColor(progressBar.fillColor)
-        for i = 1, progressBar.widthFill do
-            self.mon.setCursorPos(progressBar.x + i - 1, progressBar.y)
+        self.mon.setBackgroundColor(pb.fillColor)
+        for i = 1, pb.widthFill do
+            self.mon.setCursorPos(pb.x + i - 1, pb.y)
             self.mon.write(" ")  -- Un espace pour remplir la zone de la barre
         end
 
         -- Ensuite, dessiner la partie fond (background)
-        self.mon.setBackgroundColor(progressBar.bgColor)
-        for i = 1, progressBar.widthBg do
-            self.mon.setCursorPos(progressBar.x + progressBar.widthFill + i - 1, progressBar.y)
+        self.mon.setBackgroundColor(pb.bgColor)
+        for i = 1, pb.widthBg do
+            self.mon.setCursorPos(pb.x + pb.widthFill + i - 1, pb.y)
             self.mon.write(" ")  -- Un espace pour remplir la zone de fond
         end
     end
